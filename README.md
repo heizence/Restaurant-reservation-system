@@ -43,8 +43,8 @@
 
 1.  **프로젝트 클론**
     ```bash
-    git clone https://github.com/heizence/HIT_assignment_project.git
-    cd HIT_assignment_project
+    git clone https://github.com/heizence/Restaurant-reservation-system.git
+    cd Restaurant-reservation-system
     ```
 
 2.  **의존성 패키지 설치**
