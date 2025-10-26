@@ -1,5 +1,5 @@
 {
-  "name": "HIT_assignment_project",
+  "name": "Restaurant-reservation-system",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -31,6 +31,7 @@
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "joi": "^18.0.1",
     "mysql2": "^3.14.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

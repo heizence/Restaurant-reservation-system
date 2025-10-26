@@ -12,6 +12,9 @@ export class RestaurantsService {
   ) {}
 
   async findByLoginId(login_id: string): Promise<Restaurant | null> {
-    return this.restaurantsRepository.findOne({ where: { login_id } });
+    return this.restaurantsRepository.findOne({
+      where: { login_id },
+      select: ['id', 'login_id', 'password'],
+    });
   }
 }

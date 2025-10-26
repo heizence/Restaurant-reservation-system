@@ -12,6 +12,9 @@ export class CustomersService {
   ) {}
 
   async findByLoginId(login_id: string): Promise<Customer | null> {
-    return this.customersRepository.findOne({ where: { login_id } });
+    return this.customersRepository.findOne({
+      where: { login_id },
+      select: ['id', 'login_id', 'password'],
+    });
   }
 }

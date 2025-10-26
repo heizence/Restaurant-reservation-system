@@ -60,9 +60,25 @@ export class ReservationsService {
     // 4. 트랜잭션 시작
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
-    await queryRunner.startTransaction();
+    await queryRunner.startTransaction('SERIALIZABLE'); // 격리 수준을 'SERIALIZABLE'로 설정
 
     try {
+      // 예약 중복 확인
+      const existingReservation = await queryRunner.manager.findOne(
+        Reservation,
+        {
+          where: {
+            restaurant_id: restaurantId,
+            start_time: LessThan(endTime),
+            end_time: MoreThan(startTime),
+          },
+        },
+      );
+
+      if (existingReservation) {
+        throw new ConflictException('해당 시간에 이미 예약이 존재합니다.');
+      }
+
       // DTO의 camelCase 속성을 Entity의 snake_case 속성으로 명시적으로 매핑
       const reservationData = {
         restaurant_id: restaurantId,
@@ -213,20 +229,41 @@ export class ReservationsService {
 
   // 예약 취소
   async remove(id: number, customerId: number): Promise<void> {
-    const reservation = await this.reservationsRepository.findOne({
-      where: { id },
-    });
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    if (!reservation) {
-      throw new NotFoundException(`Reservation with ID ${id} not found.`);
+    let affectedRows = 0;
+
+    try {
+      // 1. [선행] 자식 테이블(reservation_menus)의 데이터를 먼저 삭제
+      await queryRunner.manager.delete(ReservationMenu, {
+        reservation_id: id,
+      });
+
+      // 2. [후행] 부모 테이블(reservations)의 데이터를 삭제 (소유권 검증 포함)
+      const deleteResult = await queryRunner.manager.delete(Reservation, {
+        id,
+        customer_id: customerId, // id와 customer_id가 모두 일치해야 삭제
+      });
+
+      affectedRows = deleteResult.affected || 0;
+
+      // 3. 트랜잭션 커밋
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      // 4. 에러 시 롤백
+      await queryRunner.rollbackTransaction();
+      throw err; // HttpExceptionFilter가 처리하도록 에러를 다시 던짐
+    } finally {
+      // 5. 쿼리 러너 해제
+      await queryRunner.release();
     }
-    // 소유권 확인
-    if (reservation.customer_id !== customerId) {
-      throw new ForbiddenException(
-        'You do not have permission to cancel this reservation.',
+
+    if (affectedRows === 0) {
+      throw new NotFoundException(
+        `Reservation with ID ${id} not found or you don't have permission.`,
       );
     }
-
-    await this.reservationsRepository.delete(id);
   }
 }

@@ -13,12 +13,14 @@ import { RestaurantsModule } from '../restaurants/restaurants.module';
   imports: [
     CustomersModule,
     RestaurantsModule,
-    PassportModule,
+    PassportModule, // passport 기능을 사용하기 위해 import
+
+    // JWT 모듈을 비동기로 등록
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      inject: [ConfigService],
+      inject: [ConfigService], // useFactory 에 ConfigService 주입
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
+        secret: configService.get<string>('JWT_SECRET_KEY'),
         signOptions: { expiresIn: '1h' }, // 토큰 만료 시간 : 1시간
       }),
     }),

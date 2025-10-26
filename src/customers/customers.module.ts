@@ -7,6 +7,6 @@ import { CustomersService } from './customers.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Customer])],
   providers: [CustomersService],
-  exports: [CustomersService], // 다른 모듈에서 사용 가능하도록 export
+  exports: [CustomersService],
 })
 export class CustomersModule {}

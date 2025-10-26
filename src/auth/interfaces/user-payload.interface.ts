@@ -2,7 +2,6 @@
 import { Role } from '../roles.enum';
 
 export interface UserPayload {
-  /** 유저 ID */
   sub: number;
   login_id: string;
   role: Role;
