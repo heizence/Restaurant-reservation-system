@@ -27,10 +27,11 @@
 
 ## 3. 적용 기술 스택
 
-- **Backend:** Node.js, NestJS, TypeScript
-- **Database:** MySQL, TypeORM
-- **Authentication:** JWT (JSON Web Token), Passport.js, bcrypt
-- **API & Docs:** Swagger
+- **Language & Framework:** NestJS, TypeScript
+- **Database:** MySQL
+- **ORM:** TypeORM
+- **Authentication:** JWT, Passport.js
+- **API Documentation:** Swagger
 - **Testing:** Jest, Supertest (E2E Test)
 
 ## 4. 시작하기
@@ -38,7 +39,7 @@
 ### 4.1. 사전 요구사항
 
 - Node.js (v18 이상 권장)
-- npm
+- npm (v10 이상 권장)
 - MySQL
 
 ### 4.2. 설치
@@ -66,6 +67,7 @@
     DB_PASSWORD=your_db_password
     DB_DATABASE=your_db_database
     JWT_SECRET_KEY=your_local_secret_key
+    SERVER_PORT=8000
     ```
 
 ### 4.3. 애플리케이션 실행
@@ -76,11 +78,16 @@
   npm run start:dev
   ```
 
-- **프로덕션 모드로 실행**
+- **Nest 명령어로 실행(자동 재시작 없음)**
   ```bash
-  npm run build
-  npm run start:prod
+  nest start
   ```
+
+### 4.4 서버 확인
+
+http://localhost:8000 으로 접속하여 "Restaurant Reservation API is running!" 이라는 메시지가 잘 출력되는지 확인합니다.
+
+Swagger API 문서 : http://localhost:8000/api 
 
 ## 5. 테스트
 
@@ -90,13 +97,3 @@
 ```bash
 npm run test:e2e
 ```
-
-### 5.1. 테스트 계정 정보
-
-| 역할     | 로그인 ID        | 비밀번호    |
-| :------- | :--------------- | :---------- |
-| **식당** | `korean_diner`   | `qwer1234!` |
-| **식당** | `italian_bistro` | `qwer1234!` |
-| **고객** | `user_kim`       | `qwer1234!` |
-| **고객** | `user_lee`       | `qwer1234!` |
-| **고객** | `user_park`      | `qwer1234!` |
